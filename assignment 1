@@ -1,0 +1,31 @@
+import random
+
+print("Konshion!! Here is shion")
+print("Let us play a game")
+print("guess what number I think of")
+
+def play_game():
+    
+    target = random.randint (1,20)
+    print(input("guess a number 1 to 20 ")) 
+    guess = 1
+    
+    attempts = 0   
+    
+    while True:
+        num = int(input("Enter your number (0 to quit): "))
+        attempts += 1  # this line for how many time you attempts
+
+        if num == 0:
+            print(f"Game over, bye! (This round you tried {attempts-1} times before quitting)")
+            exit()
+
+        if num < guess:
+            print("Number too low, try again!")
+        elif num > guess:
+            print("Number too high, try again!")
+        else:
+            print(f"You did it in {attempts} attempts! Let's play again!")
+            break
+
+play_game()
