@@ -1,0 +1,99 @@
+import random
+import datetime
+import re
+
+WORD_FILE = "words.txt"
+MAX_ATTEMPTS = 4
+TIME_LIMIT = 60  
+
+
+def login():
+
+    while True:
+        username = input("LOGIN: ").strip()
+        if re.fullmatch(r"[A-Za-z0-9]+", username):
+            print(f"> Welcome, Agent {username}")
+            return username
+        else:
+            print("Invalid username. Alphanumeric only.")
+
+
+def load_words():
+  
+    try:
+        with open(WORD_FILE, "r") as file:
+            words = [line.strip().upper() for line in file if line.strip()]
+            return words
+    except FileNotFoundError:
+        print("Word file not found.")
+        return []
+
+
+def pick_words(words, count=6):
+  
+    return random.sample(words, count)
+
+
+def get_likeness(guess, target):
+ 
+    matches = 0
+    for i in range(len(target)):
+        if guess[i] == target[i]:
+            matches += 1
+    return matches
+
+
+def main():
+    print("INITIALIZING BOOT SEQUENCE...\n")
+
+    login()
+
+    words = load_words()
+    if not words:
+        return
+
+    options = pick_words(words)
+    password = random.choice(options)
+
+    print("\nPASSWORD REQUIRED")
+    print(f"ATTEMPTS LEFT: {MAX_ATTEMPTS}\n")
+
+    for word in options:
+        print(word)
+
+    attempts_left = MAX_ATTEMPTS
+    start_time = datetime.datetime.now()
+
+    while attempts_left > 0:
+        try:
+            elapsed = (datetime.datetime.now() - start_time).seconds
+            if elapsed > TIME_LIMIT:
+                print("\nALARM TRIGGERED!")
+                print("SYSTEM LOCKED.")
+                return
+
+            guess = input("\nINPUT PASSWORD: ").strip().upper()
+
+            if guess not in options:
+                raise ValueError("Word not in list")
+
+            if guess == password:
+                print("\nACCESS GRANTED.")
+                print("SYSTEM UNLOCKED.")
+                return
+            else:
+                likeness = get_likeness(guess, password)
+                attempts_left -= 1
+                print("ACCESS DENIED.")
+                print(f"LIKENESS: {likeness}")
+                print(f"ATTEMPTS LEFT: {attempts_left}")
+
+        except ValueError:
+            print("Invalid input. Choose a word from the list.")
+
+    print("\nTERMINAL LOCKED.")
+    print("SYSTEM HALTED.")
+
+
+if __name__ == "__main__":
+    main()
